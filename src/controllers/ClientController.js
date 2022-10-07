@@ -1,9 +1,8 @@
 var db = require("../configs/database")
-var md5 = require("md5")
 
 module.exports = {
     getAll : (req, res, next) => {
-        var sql = "select * from user"
+        var sql = "select * from client"
         var params = []
         db.all(sql, params, (err, rows) => {
             if (err) {
@@ -17,9 +16,9 @@ module.exports = {
           });
     },
 
-    //Get a single user by id
+    //Get a single client by id
     get : (req, res, next) => {
-        var sql = "select * from user where id = ?"
+        var sql = "select * from client where idclient = ?"
         var params = [req.params.id]
         db.get(sql, params, (err, row) => {
             if (err) {
@@ -33,14 +32,20 @@ module.exports = {
         });
     },
 
-    //Create a new user
+    //Create a new client
     post : (req, res, next) => {
         var errors=[]
-        if (!req.body.password){
-            errors.push("No password specified");
+        if (!req.body.name){
+            errors.push("No name specified");
         }
-        if (!req.body.email){
-            errors.push("No email specified");
+        if (!req.body.forename){
+            errors.push("No forename specified");
+        }
+        if (!req.body.address){
+            errors.push("No address specified");
+        }
+        if (!req.body.tel){
+            errors.push("No tel specified");
         }
         if (errors.length){
             res.status(400).json({"error":errors.join(",")});
@@ -48,11 +53,12 @@ module.exports = {
         }
         var data = {
             name: req.body.name,
-            email: req.body.email,
-            password : md5(req.body.password)
+            forename: req.body.forename,
+            address: req.body.address,
+            tel: req.body.tel
         }
-        var sql ='INSERT INTO user (name, email, password) VALUES (?,?,?)'
-        var params =[data.name, data.email, data.password]
+        var sql ='INSERT INTO client (name, forename, address, tel) VALUES (?,?,?,?)'
+        var params =[data.name, data.forename, data.address, data.tel]
         db.run(sql, params, function (err, result) {
             if (err){
                 res.status(400).json({"error": err.message})
@@ -70,16 +76,18 @@ module.exports = {
     patch : (req, res, next) => {
         var data = {
             name: req.body.name,
-            email: req.body.email,
-            password : req.body.password ? md5(req.body.password) : null
+            forename: req.body.forename,
+            address: req.body.address,
+            tel:req.body.tel
         }
         db.run(
-            `UPDATE user set 
+            `UPDATE client set 
             name = COALESCE(?,name), 
-            email = COALESCE(?,email), 
-            password = COALESCE(?,password) 
-            WHERE id = ?`,
-            [data.name, data.email, data.password, req.params.id],
+            forename = COALESCE(?,forename), 
+            address = COALESCE(?,address),
+            tel = COALESCE(?,tel)
+            WHERE idclient = ?`,
+            [data.name, data.forename, data.address, data.tel, req.params.id],
             function (err, result) {
                 if (err){
                     res.status(400).json({"error": res.message})
@@ -96,7 +104,7 @@ module.exports = {
     //delete a user
     delete : (req, res, next) => {
         db.run(
-            'DELETE FROM user WHERE id = ?',
+            'DELETE FROM client WHERE idclient = ?',
             req.params.id,
             function (err, result) {
                 if (err){
@@ -106,39 +114,4 @@ module.exports = {
                 res.json({"message":"deleted", changes: this.changes})
         });
     },
-    //authentication
-    auth : (req, res, next) => {
-        var errors=[]
-        if (!req.body.password){
-            errors.push("No password specified");
-        }
-        if (!req.body.email){
-            errors.push("No email specified");
-        }
-        if (errors.length){
-            res.status(400).json({"error":errors.join(",")});
-            return;
-        }
-        var data = {
-            email: req.body.email,
-            password : md5(req.body.password)
-        }
-        var sql ='SELECT * FROM user WHERE email=? and password=?'
-        var params =[data.email, data.password]
-        db.all(sql, params, function (err, result) {
-            if (err){
-                res.status(400).json({"error": err.message})
-                return;
-            }
-            if(result.length === 0) {   
-                res.status(400).send("No Match")
-                return;          
-            }
-            res.json({
-                "message": "success",
-                "data": result
-            })
-        });
-    },
-
 }

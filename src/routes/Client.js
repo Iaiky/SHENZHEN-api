@@ -1,24 +1,21 @@
 const express = require('express')
 const router = express.Router();
 
-const controller = require("../controllers/UserController")
+const controller = require("../controllers/ClientController")
 
-//list of users
+//list of clients
 router.get("/", controller.getAll);
 
-//Get a single user by id
+//Get a single client by id
 router.get("/:id", controller.get);
 
-//Create a new user
+//Create a new client
 router.post("/", controller.post);
 
-//Update a user
+//Update a client
 router.patch("/:id", controller.patch);
 
-//Delete a user
+//Delete a client
 router.delete("/:id", controller.delete);
-
-//Authentication
-router.post("/auth", controller.auth);
 
 module.exports = router

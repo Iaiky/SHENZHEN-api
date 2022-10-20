@@ -10,7 +10,7 @@ module.exports = {
               return;
             }
             res.json({
-                "message":"success",
+                // "message":"success",
                 "data":rows
             })
           });
@@ -26,7 +26,7 @@ module.exports = {
             return;
             }
             res.json({
-                "message":"success",
+                "message":"successss",
                 "data":row
             })
         });
@@ -61,7 +61,7 @@ module.exports = {
                 return;
             }
             res.json({
-                "message": "success",
+                "message": "succes",
                 "data": data,
                 "id" : this.lastID
             })
@@ -108,4 +108,19 @@ module.exports = {
                 res.json({"message":"deleted", changes: this.changes})
         });
     },
+
+    //Getalll item
+    getItem : (req, res, next) => {
+        var sql = "select article.idarticle, article.name, type.name as type, article.price from article inner join type on article.type=type.idtype"
+        db.all(sql, (err, rows) => {
+            if (err) {
+              res.status(400).json({"error":err.message});
+              return;
+            }
+            res.json({
+                "message":"success",
+                "data":rows
+            })
+          });
+    }
 }

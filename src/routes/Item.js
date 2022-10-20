@@ -5,6 +5,7 @@ const controller = require("../controllers/ItemController")
 
 //list of Item
 router.get("/", controller.getAll);
+router.get("/list", controller.getItem);
 
 //Get a single Item by id
 router.get("/:id", controller.get);

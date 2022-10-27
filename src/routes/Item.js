@@ -6,8 +6,10 @@ const controller = require("../controllers/ItemController")
 //list of Item
 router.get("/", controller.getAll);
 router.get("/list", controller.getItem);
+router.get("/itemlist", controller.getList);
 
 //Get a single Item by id
+router.get("/list/:id", controller.getOne);
 router.get("/:id", controller.get);
 
 //Create a new Item

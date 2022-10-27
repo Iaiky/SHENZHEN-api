@@ -122,5 +122,34 @@ module.exports = {
                 "data":rows
             })
           });
+    },
+    getList : (req, res, next) => {
+        var sql = "select idarticle, name from article"
+        var params = []
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+              res.status(400).json({"error":err.message});
+              return;
+            }
+            res.json({
+                "message":"success",
+                "data":rows
+            })
+          });
+    },
+    //Get a single item by id
+    getOne : (req, res, next) => {
+        var sql = "select article.idarticle, article.name, type.name as type, article.price from article inner join type on article.type=type.idtype where idarticle=?"
+        var params = [req.params.id]
+        db.get(sql, params, (err, row) => {
+            if (err) {
+            res.status(400).json({"error":err.message});
+            return;
+            }
+            res.json({
+                "message":"successss",
+                "data":row
+            })
+        });
     }
 }

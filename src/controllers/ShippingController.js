@@ -2,7 +2,7 @@ var db = require("../configs/database")
 
 module.exports = {
     getAll : (req, res, next) => {
-        var sql = "select * from client"
+        var sql = "select * from shipping order by dateenvoi desc"
         var params = []
         db.all(sql, params, (err, rows) => {
             if (err) {
@@ -16,8 +16,8 @@ module.exports = {
           });
     },
 
-    getList : (req, res, next) => {
-        var sql = "select idclient, client.name || ' ' || client.forename as name from client"
+    getId : (req, res, next) => {
+        var sql = "select idshipping from shipping order by dateenvoi desc"
         var params = []
         db.all(sql, params, (err, rows) => {
             if (err) {
@@ -31,9 +31,9 @@ module.exports = {
           });
     },
 
-    //Get a single client by id
+    //Get a single shipping by id
     get : (req, res, next) => {
-        var sql = "select * from client where idclient = ?"
+        var sql = "select * from shipping where idshipping = ?"
         var params = [req.params.id]
         db.get(sql, params, (err, row) => {
             if (err) {
@@ -41,68 +41,59 @@ module.exports = {
             return;
             }
             res.json({
-                "message":"success",
+                "message":"successss",
                 "data":row
             })
         });
     },
 
-    //Create a new client
+    //Create a new shipping
     post : (req, res, next) => {
         var errors=[]
-        if (!req.body.name){
-            errors.push("No name specified");
+        if (!req.body.dateenvoi){
+            errors.push("No dateenvoi specified");
         }
-        if (!req.body.forename){
-            errors.push("No forename specified");
-        }
-        if (!req.body.address){
-            errors.push("No address specified");
-        }
-        if (!req.body.tel){
-            errors.push("No tel specified");
+        if (!req.body.container){
+            errors.push("No container specified");
         }
         if (errors.length){
             res.status(400).json({"error":errors.join(",")});
             return;
         }
         var data = {
-            name: req.body.name,
-            forename: req.body.forename,
-            address: req.body.address,
-            tel: req.body.tel
+            dateenvoi: req.body.dateenvoi,
+            datearrive: req.body.datearrive,
+            container: req.body.container
         }
-        var sql ='INSERT INTO client (name, forename, address, tel) VALUES (?,?,?,?)'
-        var params =[data.name, data.forename, data.address, data.tel]
+        var sql ='INSERT INTO shipping (dateenvoi, datearrive, container) VALUES (?,?,?)'
+        var params =[data.dateenvoi, data.datearrive, data.container, data.command]
         db.run(sql, params, function (err, result) {
             if (err){
                 res.status(400).json({"error": err.message})
                 return;
             }
             res.json({
-                "message": "success",
+                "message": "succes",
                 "data": data,
                 "id" : this.lastID
             })
         });
     },
 
-    //update a new user
+    //update a shipping
     patch : (req, res, next) => {
         var data = {
-            name: req.body.name,
-            forename: req.body.forename,
-            address: req.body.address,
-            tel:req.body.tel
+            dateenvoi: req.body.dateenvoi,
+            datearrive: req.body.datearrive,
+            container: req.body.container
         }
         db.run(
-            `UPDATE client set 
-            name = COALESCE(?,name), 
-            forename = COALESCE(?,forename), 
-            address = COALESCE(?,address),
-            tel = COALESCE(?,tel)
-            WHERE idclient = ?`,
-            [data.name, data.forename, data.address, data.tel, req.params.id],
+            `UPDATE shipping set 
+            dateenvoi = COALESCE(?,dateenvoi), 
+            datearrive = COALESCE(?,datearrive), 
+            container = COALESCE(?,container)
+            WHERE idshipping = ?`,
+            [data.dateenvoi, data.datearrive, data.container, req.params.id],
             function (err, result) {
                 if (err){
                     res.status(400).json({"error": res.message})
@@ -116,10 +107,10 @@ module.exports = {
         });
     },
 
-    //delete a user
+    //delete a shipping
     delete : (req, res, next) => {
         db.run(
-            'DELETE FROM client WHERE idclient = ?',
+            'DELETE FROM shipping WHERE idshipping = ?',
             req.params.id,
             function (err, result) {
                 if (err){
@@ -128,5 +119,5 @@ module.exports = {
                 }
                 res.json({"message":"deleted", changes: this.changes})
         });
-    },
+    }
 }

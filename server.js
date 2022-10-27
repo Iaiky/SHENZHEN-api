@@ -14,11 +14,16 @@ const userRoute = require("./src/routes/User")
 const clientRoute = require("./src/routes/Client")
 const typeRoute = require("./src/routes/Type")
 const itemRoute = require("./src/routes/Item")
+const commandRoute = require("./src/routes/Command")
+const shippingRoute = require("./src/routes/Shipping")
+
 
 app.use('/api/user', userRoute);
 app.use('/api/client', clientRoute);
 app.use('/api/type', typeRoute);
-app.use('/api/item', itemRoute)
+app.use('/api/item', itemRoute);
+app.use('/api/command', commandRoute);
+app.use('/api/shipping', shippingRoute);
 
 
 // Server port

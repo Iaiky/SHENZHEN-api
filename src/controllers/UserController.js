@@ -49,10 +49,11 @@ module.exports = {
         var data = {
             name: req.body.name,
             email: req.body.email,
-            password : md5(req.body.password)
+            password : md5(req.body.password),
+            usertype : req.body.usertype
         }
-        var sql ='INSERT INTO user (name, email, password) VALUES (?,?,?)'
-        var params =[data.name, data.email, data.password]
+        var sql ='INSERT INTO user (name, email, password, usertype) VALUES (?,?,?,?)'
+        var params =[data.name, data.email, data.password, data.usertype]
         db.run(sql, params, function (err, result) {
             if (err){
                 res.status(400).json({"error": err.message})
@@ -123,7 +124,7 @@ module.exports = {
             email: req.body.email,
             password : md5(req.body.password)
         }
-        var sql ='SELECT * FROM user WHERE email=? and password=?'
+        var sql ='SELECT * FROM user WHERE email=? and password=? and validation = 1'
         var params =[data.email, data.password]
         db.all(sql, params, function (err, result) {
             if (err){

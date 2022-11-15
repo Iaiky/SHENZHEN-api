@@ -184,6 +184,21 @@ module.exports = {
             })
         });
     },
+    // by iduser
+    getnumberuser : (req, res, next) => {
+        var sql = "select count(idcommand) as numbercommand from command group by iduser having iduser = ?"
+        var params = [req.params.id]
+        db.get(sql, params, (err, row) => {
+            if (err) {
+            res.status(400).json({"error":err.message});
+            return;
+            }
+            res.json({
+                "message":"successss",
+                "data":row
+            })
+        });
+    },
 
     //list command 
     // of a client
@@ -219,6 +234,21 @@ module.exports = {
     // of a shipping
     getlistcommandshipping : (req, res, next) => {
         var sql = "select command.idcommand,command.datecommand,client.name ||' '|| client.forename as client,article.name as article,(select type.name from type inner join article on type.idtype = article.type where command.idarticle = article.idarticle) as category,command.quantity,article.price * command.quantity as price,shipping.dateenvoi,shipping.datearrive,shipping.container,command.statut from (((command inner join client on command.idclient = client.idclient)inner join article on command.idarticle = article.idarticle)left join shipping on command.idshipping = shipping.idshipping)where command.idshipping = ? order by datecommand desc"
+        var params = [req.params.id]
+        db.all(sql, params, (err, row) => {
+            if (err) {
+            res.status(400).json({"error":err.message});
+            return;
+            }
+            res.json({
+                "message":"successss",
+                "data":row
+            })
+        });
+    },
+    // of a user
+    getlistcommanduser : (req, res, next) => {
+        var sql = "select command.idcommand,command.datecommand,client.name ||' '|| client.forename as client,article.name as article,(select type.name from type inner join article on type.idtype = article.type where command.idarticle = article.idarticle) as category,command.quantity,article.price * command.quantity as price,shipping.dateenvoi,shipping.datearrive,shipping.container,command.statut from (((command inner join client on command.idclient = client.idclient)inner join article on command.idarticle = article.idarticle)left join shipping on command.idshipping = shipping.idshipping)where command.iduser = ? order by datecommand desc"
         var params = [req.params.id]
         db.all(sql, params, (err, row) => {
             if (err) {

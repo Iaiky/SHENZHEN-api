@@ -13,6 +13,8 @@ router.get("/numbercommandclient/:id", controller.getnumberclient);
 router.get("/numbercommanditem/:id", controller.getnumberitem);
 // by a shipping
 router.get("/numbercommandshipping/:id", controller.getnumbershipping);
+// by a user
+router.get("/numbercommanduser/:id", controller.getnumberuser);
 
 
 //get list of command made 
@@ -22,6 +24,8 @@ router.get("/commandclientlist/:id", controller.getlistcommandclient);
 router.get("/commanditemlist/:id", controller.getlistcommanditem);
 // by a shipping
 router.get("/commandshippinglist/:id", controller.getlistcommandshipping);
+// by a user
+router.get("/commanduserlist/:id", controller.getlistcommanduser);
 
 //Get a single command by id
 router.get("/update/:id", controller.getOne);

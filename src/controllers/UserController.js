@@ -17,6 +17,38 @@ module.exports = {
           });
     },
 
+    //get list of validate user
+    getValidList : (req, res, next) => {
+        var sql = "select * from user where validation = 1"
+        var params = []
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+              res.status(400).json({"error":err.message});
+              return;
+            }
+            res.json({
+                "message":"success",
+                "data":rows
+            })
+          });
+    },
+
+    //get list of non validate user
+    getUnvalidList : (req, res, next) => {
+        var sql = "select * from user where validation is null"
+        var params = []
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+              res.status(400).json({"error":err.message});
+              return;
+            }
+            res.json({
+                "message":"success",
+                "data":rows
+            })
+          });
+    },
+
     //Get a single user by id
     get : (req, res, next) => {
         var sql = "select * from user where id = ?"
@@ -72,15 +104,15 @@ module.exports = {
         var data = {
             name: req.body.name,
             email: req.body.email,
-            password : req.body.password ? md5(req.body.password) : null
+            usertype : req.body.usertype
         }
         db.run(
             `UPDATE user set 
             name = COALESCE(?,name), 
             email = COALESCE(?,email), 
-            password = COALESCE(?,password) 
+            usertype = COALESCE(?,usertype) 
             WHERE id = ?`,
-            [data.name, data.email, data.password, req.params.id],
+            [data.name, data.email, data.usertype, req.params.id],
             function (err, result) {
                 if (err){
                     res.status(400).json({"error": res.message})
@@ -89,6 +121,25 @@ module.exports = {
                 res.json({
                     message: "success",
                     data: data,
+                    changes: this.changes
+                })
+        });
+    },
+
+    //add a new user
+    add : (req, res, next) => {
+        db.run(
+            `UPDATE user set 
+            validation = 1
+            WHERE id = ?`,
+            req.params.id,
+            function (err, result) {
+                if (err){
+                    res.status(400).json({"error": res.message})
+                    return;
+                }
+                res.json({
+                    message: "success",
                     changes: this.changes
                 })
         });
